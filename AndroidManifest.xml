@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.airsync_test">
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <application android:allowBackup="true" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:theme="@style/AppTheme">
+        <activity android:label="@string/app_name" android:name=".SplashscreenActivity" android:theme="@style/AppTheme.Fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:label="@string/app_name" android:name="com.example.airsync_test.ScanActivity"/>
+        <activity android:label="@string/app_name" android:name="com.example.airsync_test.AirSyncMain_Activity"/>
+        <activity android:label="@string/app_autotest" android:name="com.example.airsync_test.ble.BLE_AutoTestActivity"/>
+        <activity android:label="@string/app_autotest" android:name="com.example.airsync_test.classic.BC_AutoTestActivity"/>
+        <activity android:label="@string/app_manualtest" android:name="com.example.airsync_test.ble.BLE_ManualTestActivity"/>
+        <activity android:label="@string/app_manualtest" android:name="com.example.airsync_test.classic.BC_ManualTestActivity"/>
+        <activity android:label="@string/app_log" android:name="com.example.airsync_test.AirSyncTest_Log"/>
+    </application>
+</manifest>

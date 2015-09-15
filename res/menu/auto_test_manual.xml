@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@id/autotest_start" android:orderInCategory="100" android:title="@string/start" android:showAsAction="always" />
+    <item android:id="@id/autotest_log" android:orderInCategory="110" android:title="@string/log" android:showAsAction="always" />
+</menu>

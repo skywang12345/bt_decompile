@@ -1,0 +1,126 @@
+Manifest-Version: 1.0
+Created-By: 1.0 (Android)
+
+Name: res/drawable-xhdpi/ic_launcher.png
+SHA1-Digest: gBadpLi+vqV5L1iyyQluaVY93O8=
+
+Name: res/menu/auto_test_manual.xml
+SHA1-Digest: e2XkzrFsao4uViRavnKMCEPm7+c=
+
+Name: res/drawable-hdpi/menu_scan.png
+SHA1-Digest: lpJHtDhGJCGkDfd9AiMEKO4Wap4=
+
+Name: res/layout/activity_test_log.xml
+SHA1-Digest: rkrhgb9B1OOhWmKv1Kq/iA4jfLE=
+
+Name: res/layout/activity_manual_edit_push.xml
+SHA1-Digest: Kws5Gt/CL7AScUPo3+BIEt7Y32A=
+
+Name: res/layout/activity_auto_test.xml
+SHA1-Digest: AqyGdT+a6fU9JXaZUb0wK4T3DGQ=
+
+Name: res/drawable-hdpi/ic_launcher.png
+SHA1-Digest: gBadpLi+vqV5L1iyyQluaVY93O8=
+
+Name: res/drawable-hdpi/warning1.png
+SHA1-Digest: H5VGwu6qnrEIrduJLmu76pFzVKk=
+
+Name: res/layout/activity_manual_edit.xml
+SHA1-Digest: YjNSXwek96LWlmnLatrUOTyNxl0=
+
+Name: res/layout/activity_air_sync_main_.xml
+SHA1-Digest: 4sQaClhaPamZckJiTe23ZHt9n38=
+
+Name: res/layout/activity_scan.xml
+SHA1-Digest: zaWY+hgXjDmVf3KGJBiUT30Hcg0=
+
+Name: res/drawable-hdpi/ticket.png
+SHA1-Digest: 5+aWWJxA1oD2mCpQBPKpqDoZxCc=
+
+Name: res/drawable-hdpi/ticket2.png
+SHA1-Digest: FTXY0uE93B4zsxwD8b/2apZL4Zw=
+
+Name: resources.arsc
+SHA1-Digest: 3s5GIfehgFjdwz/mOzWD/r9RcvM=
+
+Name: res/drawable/button_shape.xml
+SHA1-Digest: xzvgTlZMV9pz5eTQOvRWQ+R2CGw=
+
+Name: res/layout/activity_manual_edit_resp.xml
+SHA1-Digest: ySbJr1Z5l+nHeZkrsSRJMLZisQY=
+
+Name: res/menu/scan_activity_menu.xml
+SHA1-Digest: jur3xwNzdXq+rgpsEE2mD9N/Nys=
+
+Name: res/layout/activity_splashscreen.xml
+SHA1-Digest: bxQ+6B/Yy5ZZVo06fMfNVFNGvts=
+
+Name: res/drawable-hdpi/tips.png
+SHA1-Digest: r74+I2W+kG0j1KEM6kgdMqadzhU=
+
+Name: res/layout/auto_test_item_info.xml
+SHA1-Digest: D6jgZfTihffqy5L1HRXGQy3ZzRQ=
+
+Name: res/layout/scan_device_item_info.xml
+SHA1-Digest: uDEjxHa2Wkr7CxRBmPOQhQpMaRQ=
+
+Name: AndroidManifest.xml
+SHA1-Digest: 6VdgBwefofqX0OdIGPAsXqk8KM8=
+
+Name: res/layout/scan_device_item.xml
+SHA1-Digest: P+wZNCp2/39frEi6rw1oduOM/Vg=
+
+Name: res/layout/activity_manual_test.xml
+SHA1-Digest: yoWAgIHPz0HyFec1IqJ4q1C45HM=
+
+Name: res/drawable-hdpi/warnning.png
+SHA1-Digest: OnBfQiht6M3s28SbPhc8QKyzc9c=
+
+Name: res/menu/air_sync_main_.xml
+SHA1-Digest: KuTD8nyf3a0NC/RqH36n5aP9mGs=
+
+Name: res/drawable-hdpi/menu_disconnect.png
+SHA1-Digest: 4FqiDDaNb5yU6JTVh7iS0PVfG9s=
+
+Name: res/drawable-hdpi/btn_press.9.png
+SHA1-Digest: ee3euQzTa44AgvhjKjkQY1dLpaY=
+
+Name: res/drawable-hdpi/submenu_send.png
+SHA1-Digest: KDmZqkIBHv4xisB3ZCUgPVtbRNI=
+
+Name: classes.dex
+SHA1-Digest: fVzpYuxl+A/kfH2ru6iQeB8sN5E=
+
+Name: res/drawable-hdpi/wechat_logo.png
+SHA1-Digest: 6yemQYZtaOmqGNGttNNoKF8Mgqw=
+
+Name: res/drawable-hdpi/menu_connect.png
+SHA1-Digest: F8nrqA0KInnBS4NMFuKSNME/pNI=
+
+Name: res/menu/log_activity_menu.xml
+SHA1-Digest: MUwdNg4rD6x5pcke3H1A4qkz5oM=
+
+Name: res/drawable/button_selector.xml
+SHA1-Digest: HjaHh+JOaEOjJQeFXWbmkPuETzk=
+
+Name: res/drawable-mdpi/ic_launcher.png
+SHA1-Digest: gBadpLi+vqV5L1iyyQluaVY93O8=
+
+Name: res/layout/progress_bar.xml
+SHA1-Digest: 6JCi0xkrsAXS8dzpwzrnPesXuPk=
+
+Name: res/drawable-hdpi/airsync_logo.png
+SHA1-Digest: QoCZk5GTTXqlv6JQ3zB8C5S4/tY=
+
+Name: res/drawable-hdpi/btn_normal.9.png
+SHA1-Digest: ZMsvXWm2aaI1u9v1j57JIudaEIc=
+
+Name: res/layout/auto_test_item.xml
+SHA1-Digest: /GHJO4Y/GfLGvYS6ApUGYm94qpM=
+
+Name: res/drawable-hdpi/menu_stop.png
+SHA1-Digest: 5qMqxo7cHsxVSdWE5LZZc78wsdU=
+
+Name: res/drawable-hdpi/menu_save.png
+SHA1-Digest: cms8r/FmWJJ5pshEDFD4yGUTafY=
+

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AirSyncDebugger</string>
+    <string name="app_autotest">自动测试</string>
+    <string name="app_manualtest">手动测试</string>
+    <string name="app_log">日志</string>
+    <string name="scan">扫描</string>
+    <string name="stop">停止</string>
+    <string name="log">日志</string>
+    <string name="start">测试</string>
+    <string name="auto_test">自动测试</string>
+    <string name="manual_test">手动测试</string>
+    <string name="title_connect_state">Device Connect State</string>
+    <string name="title_log">Log</string>
+    <string name="save">保存</string>
+    <string name="log_clear">清除</string>
+    <string name="pushPack">PUSH包</string>
+    <string name="edit_push">编辑Send Data Push包</string>
+    <string name="edit_resp">编辑Send Data Response包</string>
+    <string name="none_found">No available devices have been found</string>
+    <string name="none_paired">No devices have been paired</string>
+    <string name="bt_not_enabled_leaving">Bluetooth was not enabled.</string>
+</resources>
