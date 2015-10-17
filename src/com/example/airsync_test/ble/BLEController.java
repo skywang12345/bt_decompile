@@ -69,15 +69,19 @@ public class BLEController
                 blecontroller.disconnectImp();
                 return;
 
+            // 发送数据
             case 3: // '\003'
+            case MESSAGE_WHAT_WRITE:
                 blecontroller.writeDataAsync((byte[])message.obj);
                 return;
 
-            case 7: // '\007'
+            // case 7: // '\007'
+            case MESSAGE_WHAT_ON_CHARACTERISTIC_WRITE:
                 blecontroller.onCharacteristicWriteImp(message.arg1);
                 return;
 
             case 8: // '\b'
+            case MESSAGE_WHAT_ON_RECEIVE: // '\b'
                 blecontroller.onDataReceiveImp((byte[])message.obj, message.arg1);
                 return;
 
@@ -138,9 +142,8 @@ public class BLEController
             public void run()
             {
                 Log.e("BLEController", "Write data timeout");
-                if(mBLETestCallback != null)
-                {
-                    com.example.airsync_test.MsgObj.MsgTestObj msgtestobj = new com.example.airsync_test.MsgObj.MsgTestObj(false, "<font color='#ff0000'>Send Push Package failed</font>: Write data timeout.<br>\u53EF\u80FD\u53D1\u751F\u4E8E\u5BA2\u6237\u7AEF\u53D1\u9001\u6570\u636E\u65F6\u8FDE\u63A5\u65AD\u5F00");
+                if(mBLETestCallback != null) {
+                    com.example.airsync_test.MsgObj.MsgTestObj msgtestobj = new com.example.airsync_test.MsgObj.MsgTestObj(false, "<font color='#ff0000'>Send Push Package failed</font>: Write data timeout.<br>可能发生于客户端发送数据时连接断开");
                     mBLETestCallback.sendMessage(27, msgtestobj, 17, 1);
                     com.example.airsync_test.MsgObj.MsgTestObj msgtestobj1 = new com.example.airsync_test.MsgObj.MsgTestObj(false, "Write data timeout");
                     mBLETestCallback.repostMsg(1, msgtestobj1);
@@ -345,31 +348,27 @@ _L5:
         writeDataImp();
     }
 
-    private void onCharacteristicWriteImp(int i)
+    private void onCharacteristicWriteImp(int status)
     {
-        Log.i("BLEController", (new StringBuilder("------onDataWriteCallbackImp------ status = %d")).append(i).toString());
+        Log.i("BLEController", (new StringBuilder("------onDataWriteCallbackImp------ status = %d")).append(status).toString());
         mHandler.removeCallbacks(mRunnableImpWriteData);
-        if(i != 0)
-        {
-            Log.e("BLEController", (new StringBuilder("write data error: ")).append(i).toString());
-            if(mBLETestCallback != null)
-            {
+        if(status != 0) {
+            Log.e("BLEController", (new StringBuilder("write data error: ")).append(status).toString());
+            if(mBLETestCallback != null) {
                 com.example.airsync_test.MsgObj.MsgTestObj msgtestobj = new com.example.airsync_test.MsgObj.MsgTestObj(false, "<font color='#ff0000'>Send Push Package failed</font>: Async write data error");
                 mBLETestCallback.sendMessage(27, msgtestobj, 17, 1);
-                com.example.airsync_test.MsgObj.MsgTestObj msgtestobj1 = new com.example.airsync_test.MsgObj.MsgTestObj(false, (new StringBuilder("async write data error: ")).append(i).toString());
+                com.example.airsync_test.MsgObj.MsgTestObj msgtestobj1 = new com.example.airsync_test.MsgObj.MsgTestObj(false, (new StringBuilder("async write data error: ")).append(status).toString());
                 mBLETestCallback.repostMsg(1, msgtestobj1);
             }
             writeDataImp();
             return;
         }
         byte abyte0[] = mDataSplitManager.getDataChunk();
-        if(abyte0 == null)
-        {
+        if(abyte0 == null) {
             Log.i("BLEController", "write data complete");
             writeDataImp();
             return;
-        } else
-        {
+        } else {
             Log.i("BLEController", "write next chunk...");
             mSendCharacteristic.setValue(abyte0);
             mBluetoothGatt.writeCharacteristic(mSendCharacteristic);
@@ -429,12 +428,11 @@ _L5:
         }
     }
 
-    private void onDataReceiveImp(byte abyte0[], int i)
-    {
-        String s = (new StringBuilder(String.valueOf((new StringBuilder(String.valueOf((new StringBuilder("<font color='#EB8E55'>------onDataReceived------</font><br>data length = ")).append(abyte0.length).toString()))).append("<br>data dump = ").append(Util.byteArray2HexString(abyte0, abyte0.length)).append("<br>").toString()))).append("data receive seq = ").append(i).append("<br>").toString();
+    private void onDataReceiveImp(byte[] data, int seqId) {
+        String s = (new StringBuilder(String.valueOf((new StringBuilder(String.valueOf((new StringBuilder("<font color='#EB8E55'>------onDataReceived------</font><br>data length = ")).append(data.length).toString()))).append("<br>data dump = ").append(Util.byteArray2HexString(data, data.length)).append("<br>").toString()))).append("data receive seq = ").append(seqId).append("<br>").toString();
         Log.d("BLEController", s);
         mBLETestCallback.showLog(s);
-        mPacket.addRecvData(abyte0, abyte0.length, i);
+        mPacket.addRecvData(data, data.length, seqId);
     }
 
     private void onDescriptorWriteImp(BluetoothGatt bluetoothgatt, int i)
@@ -689,17 +687,16 @@ _L5:
 _L6:
     }
 
-    private void writeDataAsync(byte abyte0[])
+    private void writeDataAsync(byte buffer[])
     {
         boolean flag = true;
-        Log.i("BLEController", (new StringBuilder("------writeDataAsync------ length = ")).append(abyte0.length).toString());
-        if(flag != mConnectState)
-        {
+        Log.i("BLEController", (new StringBuilder("------writeDataAsync------ length = ")).append(buffer.length).toString());
+        if(flag != mConnectState) {
             String s = (new StringBuilder("Not ready for write data, connectstate = ")).append(mConnectState).toString();
             Log.e("BLEController", s);
             if(mBLETestCallback != null)
             {
-                com.example.airsync_test.MsgObj.MsgTestObj msgtestobj = new com.example.airsync_test.MsgObj.MsgTestObj(false, "<font color='#ff0000'>Send Push Package failed</font>: Not ready for write data<br>\u8BBE\u5907\u4E0E\u5BA2\u6237\u7AEF\u5904\u4E8E\u975E\u8FDE\u63A5\u72B6\u6001\u3002");
+                com.example.airsync_test.MsgObj.MsgTestObj msgtestobj = new com.example.airsync_test.MsgObj.MsgTestObj(false, "<font color='#ff0000'>Send Push Package failed</font>: Not ready for write data<br>设备与客户端处于非连接状态。");
                 mBLETestCallback.sendMessage(27, msgtestobj, 17, flag);
                 com.example.airsync_test.MsgObj.MsgTestObj msgtestobj1 = new com.example.airsync_test.MsgObj.MsgTestObj(false, s);
                 mBLETestCallback.repostMsg(flag, msgtestobj1);
@@ -709,7 +706,7 @@ _L6:
         if(mBluetoothGatt == null || mSendCharacteristic == null)
             flag = false;
         Assert.assertTrue(flag);
-        mListDataToSending.add(abyte0);
+        mListDataToSending.add(buffer);
         notifyWriteData();
     }
 
@@ -767,7 +764,8 @@ _L6:
     public boolean writeData(byte abyte0[])
     {
         Log.i("BLEController", (new StringBuilder("------writeData------length = ")).append(abyte0.length).toString());
-        return mHandler.sendMessage(Message.obtain(mHandler, 3, abyte0));
+        // return mHandler.sendMessage(Message.obtain(mHandler, 3, abyte0));
+        return mHandler.sendMessage(Message.obtain(mHandler, MESSAGE_WHAT_WRITE, abyte0));
     }
 
     private static final long CONNECT_TIMEOUT = 10000L;
@@ -790,7 +788,9 @@ _L6:
             Log.i("BLEController", "------onDataReceive------");
             BLEController.dataReceivedSeq = 1 + BLEController.dataReceivedSeq;
             Log.i("BLEController", (new StringBuilder("DataReceiveSeq = ")).append(BLEController.dataReceivedSeq).toString());
-            if(!mHandler.sendMessage(Message.obtain(mHandler, 8, BLEController.dataReceivedSeq, 0, bluetoothgattcharacteristic.getValue())))
+            case MESSAGE_WHAT_ON_RECEIVE: // '\b'
+            // if(!mHandler.sendMessage(Message.obtain(mHandler, 8, BLEController.dataReceivedSeq, 0, bluetoothgattcharacteristic.getValue())))
+            if(!mHandler.sendMessage(Message.obtain(mHandler, MESSAGE_WHAT_ON_RECEIVE, BLEController.dataReceivedSeq, 0, bluetoothgattcharacteristic.getValue())))
                 Log.e("BLEController", "SendMessage Failed!!! MessageWhat = 8");
         }
 
@@ -799,10 +799,11 @@ _L6:
             Log.i("BLEController", (new StringBuilder("------onCharacteristicRead------ status = ")).append(i).toString());
         }
 
-        public void onCharacteristicWrite(BluetoothGatt bluetoothgatt, BluetoothGattCharacteristic bluetoothgattcharacteristic, int i)
+        public void onCharacteristicWrite(BluetoothGatt bluetoothgatt, BluetoothGattCharacteristic bluetoothgattcharacteristic, int status)
         {
             Log.i("BLEController", (new StringBuilder("------onDataWriteCallback------ status = ")).append(i).toString());
-            if(!mHandler.sendMessage(Message.obtain(mHandler, 7, i, 0)))
+            // if(!mHandler.sendMessage(Message.obtain(mHandler, 7, i, 0)))
+            if(!mHandler.sendMessage(Message.obtain(mHandler, MESSAGE_WHAT_ON_CHARACTERISTIC_WRITE, status, 0)))
                 Log.e("BLEController", "SendMessage Failed!!! MessageWhat = 7");
         }
 

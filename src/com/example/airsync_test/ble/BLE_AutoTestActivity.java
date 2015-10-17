@@ -28,8 +28,8 @@ public class BLE_AutoTestActivity extends Activity {
                 break MISSING_BLOCK_LABEL_1930;
             mBLEController.connect();
             proc_state_list.add(Boolean.valueOf(true));
-            group_list.add("Step1: \u68C0\u6D4B\u5FAE\u4FE1\u84DD\u7259\u5916\u8BBE\u5E7F\u64AD\u5305");
-            tips_list.add("\u68C0\u6D4B\u84DD\u7259\u8BBE\u5907\u662F\u5426\u5E7F\u64AD\u4E86\u5FAE\u4FE1\u670D\u52A1(UUID:0xFEC6)\uFF0C\u82E5\u8BE5\u9879\u68C0\u6D4B\u5931\u8D25\uFF0C\u663E\u793A\u5F02\u5E38\u4FE1\u606F\u3002");
+            group_list.add("Step1: 检测微信蓝牙外设广播包");
+            tips_list.add("检测蓝牙设备是否广播了微信服务(UUID:0xFEC6)，若该项检测失败，显示异常信息。");
             sendMessage(28, null, 0, 0);
 _L9:
             if(enableThread)
@@ -53,7 +53,7 @@ label0:
                         i = 1;
                         state_list.add(Boolean.valueOf(false));
                         if(mAutoTest.getWeChatSvrTestMsg().length() == 0)
-                            arraylist.add("<font color='#ff0000'>Error: Has no any WeChat Service Broadcast: </font>\u8BBE\u5907\u65E0\u6CD5\u88AB\u63A2\u6D4B\u5230\uFF0C\u53EF\u80FD\u53D1\u751F\u4E8E\u8BBE\u5907\u5E7F\u64AD\u914D\u7F6E\u4E0D\u6B63\u786E\uFF0C\u6216\u8BBE\u5907\u8DDD\u79BB\u592A\u8FDC");
+                            arraylist.add("<font color='#ff0000'>Error: Has no any WeChat Service Broadcast: </font>设备无法被探测到，可能发生于设备广播配置不正确，或设备距离太远");
                         else
                             arraylist.add(mAutoTest.getWeChatSvrTestMsg());
                     }
@@ -66,8 +66,8 @@ _L14:
             if(!mAutoTest.getWeChatSvrTestResult()) goto _L2; else goto _L1
 _L1:
             proc_state_list.add(Boolean.valueOf(true));
-            group_list.add("Step2: \u8FDE\u63A5\u8BBE\u5907");
-            tips_list.add("\u68C0\u6D4B\u670D\u52A1\u662F\u5426\u6709Write\u7279\u5F81\u503C(UUID:0xFEC7)\u3001Indication\u7279\u5F81\u503C\u3001 Read\u7279\u5F81\u503C(UUID:0xFEC8)\uFF0C\u8FDE\u63A5\u5DF2\u6B63\u786E\u68C0\u6D4B\u84DD\u7259\u5E7F\u64AD\u5305\u7684\u8BBE\u5907\uFF1B\u82E5\u8FDE\u63A5\u5931\u8D25\uFF0C\u5219\u663E\u793A\u5F02\u5E38\u4FE1\u606F\u3002");
+            group_list.add("Step2: 连接设备");
+            tips_list.add("检测服务是否有Write特征值(UUID:0xFEC7)、Indication特征值、 Read特征值(UUID:0xFEC8)，连接已正确检测蓝牙广播包的设备；若连接失败，则%u6     63E示异常信息。");
             sendMessage(28, null, 0, 0);
 _L10:
             if(enableThread)
@@ -101,8 +101,8 @@ _L2:
             if(!(mAutoTest.getConnectWarnning() | mAutoTest.getConnectTestResult()) || !mAutoTest.getWeChatSvrTestResult()) goto _L4; else goto _L3
 _L3:
             proc_state_list.add(Boolean.valueOf(true));
-            group_list.add("Step3: \u68C0\u6D4BAUTH\u8BF7\u6C42\u53CA\u56DE\u5305");
-            tips_list.add("\u8FDE\u63A5\u6210\u529F\u540E\uFF0C\u68C0\u6D4BAuth Request\u5305\uFF0C\u6536\u5230\u540E\u89E3\u5305\uFF0C\u89E3\u5305\u6B63\u786E\u540E\u53D1\u9001\u76F8\u5E94response\u5305\uFF0C\u5E76\u663E\u793A\u8BE5\u9879\u68C0\u6D4B\u6210\u529F\uFF0C\u82E5\u6536\u5305\u8D85\u65F6\u6216\u89E3\u5305\u5F02\u5E38\uFF0C\u5219\u8BE5\u9879\u68C0\u6D4B\u5931\u8D25\uFF0C\u663E\u793A\u5F02\u5E38\u4FE1\u606F\u3002\u5305\u683C\u5F0F\uFF1AFE(MagicNumbuer)01(\u7248\u672C\u53F7)** **(\u5305\u603B\u957F\u5EA6)27 11(\u547D\u4EE4\u53F7)** **(Seq\u5E8F\u53F7\uFF0C\u598200 01)** ** **(\u5305\u4F53)\u3002");
+            group_list.add("Step3: 确定检测AUTH请求及回包");
+            tips_list.add("连接成功后，检测AuthRequest包，收到后解包，解包正确后发送相应response包，并显示该项检测成功，若收包超时或解包异常，则该项检测失败，显示异常信息。包格式：FE(MagicNumbuer)01(版本号)** **     (包总长度)27 11(命令号)** **(Seq序号，如00 01)** ** **(包体)。");
             sendMessage(28, null, 0, 0);
 _L11:
             if(enableThread)
@@ -134,8 +134,8 @@ label2:
             if(!mAutoTest.getAuthTestResult()) goto _L6; else goto _L5
 _L5:
             proc_state_list.add(Boolean.valueOf(true));
-            group_list.add("Step4: \u68C0\u6D4BINIT\u8BF7\u6C42\u53CA\u56DE\u5305");
-            tips_list.add("\u68C0\u6D4BInit Request\u5305\uFF0C\u6536\u5230\u540E\u89E3\u5305\uFF0C\u89E3\u5305\u6B63\u786E\u540E\u53D1\u9001\u76F8\u5E94response\u5305\uFF0C\u5E76\u663E\u793A\u8BE5\u9879\u68C0\u6D4B\u6210\u529F\uFF0C\u82E5\u6536\u5305\u8D85\u65F6\u6216\u89E3\u5305\u5F02\u5E38\uFF0C\u5219\u8BE5\u9879\u68C0\u6D4B\u5931\u8D25\uFF0C\u663E\u793A\u5F02\u5E38\u4FE1\u606F\u3002\u5305\u683C\u5F0F\uFF1AFE(MagicNumbuer)01(\u7248\u672C\u53F7)** **(\u5305\u603B\u957F\u5EA6)27 13(\u547D\u4EE4\u53F7)** **(Seq\u5E8F\u53F7\uFF0C\u598200 02)** **(\u5305\u4F53)\u3002");
+            group_list.add("Step4: 检测INIT请求及回包");
+            tips_list.add("检测InitRequest包，收到后解包，解包正确后发送相应response包，并显示该项检测成功，若收包超时或解包异常，则该项检测失败，显示异常信息。包格式：FE(MagicNumbuer)01(版本号)** **(包总长度)27 13(%u54     7D令号)** **(Seq序号，如00 02)** **(包体)。");
             sendMessage(28, null, 0, 0);
 _L12:
             if(enableThread)
@@ -168,8 +168,8 @@ _L6:
             if(!mAutoTest.getAuthTestResult() || !mAutoTest.getInitTestResult()) goto _L8; else goto _L7
 _L7:
             proc_state_list.add(Boolean.valueOf(true));
-            group_list.add("Step5: \u68C0\u6D4BSendDat\u8BF7\u6C42\u53CA\u56DE\u5305");
-            tips_list.add("\u68C0\u6D4BSend Data Request\u5305\uFF0C\u89E3\u5305\u5E76\u6839\u636E\u5305\u4F53\u5185\u5BB9\u6784\u9020response\u5305\uFF0C\u5E76\u663E\u793A\u8BE5\u9879\u68C0\u6D4B\u6210\u529F\uFF0C\u82E5\u6536\u5305\u8D85\u65F6\u6216\u89E3\u5305\u5F02\u5E38\uFF0C\u5219\u8BE5\u9879\u68C0\u6D4B\u5931\u8D25\uFF0C\u663E\u793A\u5F02\u5E38\u4FE1\u606F\u3002\u5305\u683C\u5F0F\uFF1AFE(MagicNumbuer)01(\u7248\u672C\u53F7)** **(\u5305\u603B\u957F\u5EA6)27 12(\u547D\u4EE4\u53F7)** **(Seq\u5E8F\u53F7\uFF0C\u598200 03)** ** **(\u5305\u4F53)\u3002");
+            group_list.add("Step5: 检测SendDat请求及回包");
+            tips_list.add("检测Send DataRequest包，解包并根据包体内容构造response包，并显示该项检测成功，若收包超时或解包异常，则该项检测失败，显示异常信息。包格式：FE(MagicNumbuer)01(版本号)** **(包总长度)27 12(命令号)** *     *(Seq序号，如00 03)** ** **(包体)。");
             sendMessage(28, null, 0, 0);
 _L13:
             if(enableThread)
@@ -203,8 +203,8 @@ _L8:
             {
                 onSendPushPack();
                 proc_state_list.add(Boolean.valueOf(true));
-                group_list.add("Step6: \u6D4B\u8BD5Push\u5305");
-                tips_list.add("\u6D4B\u8BD5push\u5305\uFF0C\u5BA2\u6237\u7AEF\u76F4\u63A5\u5411\u8BBE\u5907\u53D1\u9001\u79CDpush\u5305\uFF0C\u82E5\u53D1\u9001\u4E0D\u6210\u529F\uFF0C\u5219\u663E\u793A\u5F02\u5E38\u4FE1\u606F\uFF0C\u6B64\u9879\u68C0\u6D4B\u65E0\u56DE\u5305\u3002\u5305\u62ECenterBackground\u8FDB\u5165\u540E\u53F0\u5305\u3001enterForgrond\u8FDB\u5165\u524D\u53F0\u5305\u3001enterSleep\u8FDB\u5165\u7761\u7720\u5305\u3001 enterChatView\u8FDB\u5165\u5FAE\u4FE1\u4F1A\u8BDD\u754C\u9762\u5305\u3001exitChatView\u9000\u51FA\u5FAE\u4FE1\u4F1A\u8BDD\u754C\u9762\u5305\u3001enterHtmlView \u8FDB\u5165html\u4F1A\u8BDD\u754C\u9762\u3001exiHtmlView\u9000\u51FAhtml\u4F1A\u8BDD\u754C\u9762\u3001ManufactureData\u53D1\u9001\u6570\u636E\u7ED9\u84DD\u7259\u8BBE\u5907\u5305\u3001 htmlData\u5305\u3002");
+                group_list.add("Step6: 测试Push包");
+                tips_list.add("测试push包，客户端直接向设备发送种push包，若发送不成功，则显示异常信息，此项检测无回包。包括enterBackground进入后台包、enterForgrond进入前台包、enterSleep进入睡眠包、enterChatView进入微信会话界面包、exitChatView退出微信会话界面包、enterHtmlView进入html会话界面、exiHtmlView退出html会话界面、ManufactureData发送数据给蓝牙设备包、htmlData包。");
                 sendMessage(28, null, 0, 0);
                 if(enableThread)
                 {
@@ -396,6 +396,7 @@ _L2:
                 ble_autotestactivity.setLogPromt(((com.example.airsync_test.MsgObj.MsgTestObj)message.obj).getInfo());
                 return;
 
+                // SendInitResp
             case 9: // '\t'
                 byte abyte13[] = Packet.getAuthResp();
                 String s12 = (new StringBuilder("<font color='#2E8B57'>**** send auth response ****</font><br>data len = ")).append(abyte13.length).toString();
@@ -412,6 +413,7 @@ _L2:
                     return;
                 }
 
+                // 收到InitReq之后，反馈数据
             case 10: // '\n'
                 byte abyte12[] = Packet.getInitResp((com.example.airsync_test.MsgObj.MsgObjOnInitReq)message.obj);
                 String s11 = (new StringBuilder("<font color='#2E8B57'>**** send init request response ****</font><br>data len = ")).append(abyte12.length).toString();
@@ -596,10 +598,11 @@ _L2:
                 ble_autotestactivity.mBLEController.writeData(abyte0);
                 return;
 
+                // 自动测试项
             case 27: // '\033'
                 com.example.airsync_test.MsgObj.MsgTestObj msgtestobj = (com.example.airsync_test.MsgObj.MsgTestObj)message.obj;
-                int j = message.arg1;
-                int k = message.arg2;
+                int j = message.arg1; // 消息类型
+                int k = message.arg2; // 测试指令
                 if(j == 8)
                     ble_autotestactivity.mBLEController.getCurrentTestState(4);
                 if(j == 11)
@@ -621,7 +624,7 @@ _L2:
 
             case 30: // '\036'
                 ble_autotestactivity.mDialog.setTitle("Info");
-                ble_autotestactivity.mDialog.setMessage(" \u81EA\u52A8\u6D4B\u8BD5\u5B8C\u6210!");
+                ble_autotestactivity.mDialog.setMessage("自动测试完成!");
                 android.app.AlertDialog.Builder builder = ble_autotestactivity.mDialog;
                 android.content.DialogInterface.OnClickListener onclicklistener = new android.content.DialogInterface.OnClickListener() {
 
@@ -637,7 +640,7 @@ _L2:
                 super();
             }
                 };
-                builder.setPositiveButton("\u786E\u5B9A", onclicklistener);
+                builder.setPositiveButton("确定", onclicklistener);
                 ble_autotestactivity.mDialog.show();
                 return;
 
@@ -1130,12 +1133,12 @@ _L4:
     private static final int GONE = 8;
     private static final int INVISIBLE = 4;
     private static final long PUSH_DELAY = 6000L;
-    private static final String STEP1 = "Step1: \u68C0\u6D4B\u5FAE\u4FE1\u84DD\u7259\u5916\u8BBE\u5E7F\u64AD\u5305";
-    private static final String STEP2 = "Step2: \u8FDE\u63A5\u8BBE\u5907";
-    private static final String STEP3 = "Step3: \u68C0\u6D4BAUTH\u8BF7\u6C42\u53CA\u56DE\u5305";
-    private static final String STEP4 = "Step4: \u68C0\u6D4BINIT\u8BF7\u6C42\u53CA\u56DE\u5305";
-    private static final String STEP5 = "Step5: \u68C0\u6D4BSendDat\u8BF7\u6C42\u53CA\u56DE\u5305";
-    private static final String STEP6 = "Step6: \u6D4B\u8BD5Push\u5305";
+    private static final String STEP1 = "Step1: 检测微信蓝牙外设广播包";
+    private static final String STEP2 = "Step2: 连接设备";
+    private static final String STEP3 = "Step3: 检测AUTH请求及回包";
+    private static final String STEP4 = "Step4: 检测INIT请求及回包";
+    private static final String STEP5 = "Step5: 检测SendDat请求及回包";
+    private static final String STEP6 = "Step6: 测试Push包";
     private static final String TAG = "BLE_AutoTestActivity";
     private static final int VISIBLE;
     public static boolean autotest_step1;

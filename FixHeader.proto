@@ -1,0 +1,7 @@
+struct BpFixHead {
+    unsigned char bMagicNumber;
+    unsigned char bVer;
+    unsigned short nLength;
+    unsigned short nCmdId;
+    unsigned short nSeq;
+};

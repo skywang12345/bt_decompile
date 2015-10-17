@@ -82,8 +82,7 @@ _L4:
 _L5:
     }
 
-    public static byte[] getAuthResp()
-    {
+    public static byte[] getAuthResp() {
         com.example.airsync_test.mmbp.protobuf.MmBp.BaseResponse.Builder builder = com.example.airsync_test.mmbp.protobuf.MmBp.BaseResponse.newBuilder();
         builder.setErrCode(0);
         com.example.airsync_test.mmbp.protobuf.MmBp.BaseResponse baseresponse = builder.build();
@@ -100,25 +99,23 @@ _L5:
         return abyte0;
     }
 
-    public static int getCmdId(byte abyte0[])
-    {
+    public static int getCmdId(byte abyte0[]) {
         int i = -1;
         if(abyte0[0] == -2 && abyte0[1] == 1)
             i = (abyte0[4] << 8) + abyte0[5];
         return i;
     }
 
-    public static byte[] getFixHeadBuf(int i, int j, int k)
-    {
-        byte abyte0[] = new byte[i];
+    public static byte[] getFixHeadBuf(int dataLen, int cmdId, int seqId) {
+        byte abyte0[] = new byte[dataLen];
         abyte0[0] = -2;
         abyte0[1] = 1;
-        abyte0[2] = (byte)(0xff & i >> 8);
-        abyte0[3] = (byte)(i & 0xff);
-        abyte0[4] = (byte)(0xff & j >> 8);
-        abyte0[5] = (byte)(j & 0xff);
-        abyte0[6] = (byte)(0xff & k >> 8);
-        abyte0[7] = (byte)(k & 0xff);
+        abyte0[2] = (byte)(0xff & dataLen >> 8);
+        abyte0[3] = (byte)(dataLen & 0xff);
+        abyte0[4] = (byte)(0xff & cmdId >> 8);
+        abyte0[5] = (byte)(cmdId & 0xff);
+        abyte0[6] = (byte)(0xff & seqId >> 8);
+        abyte0[7] = (byte)(seqId & 0xff);
         return abyte0;
     }
 
@@ -402,6 +399,8 @@ _L8:
             return j;
     }
 
+    // 处理接收数据：数据头
+    // abyte0是数据，i是待接收数据长度，j是seq
     private void process(byte abyte0[], int i, int j)
     {
         int k;
@@ -411,8 +410,10 @@ _L8:
         Log.i("Packet", "process pack");
         k = mAutoTestState;
         Log.d("Packet", (new StringBuilder("AutoTestState:")).append(k).toString());
+        // 获取消息ID
         l = getCmdId(abyte0);
         Log.i("Packet", (new StringBuilder("cmdId = ")).append(l).toString());
+        // 获取消息seqId
         mSeqId = getSeqId(abyte0);
         Log.i("Packet", (new StringBuilder("seqId = ")).append(mSeqId).toString());
         i1 = i - 8;
@@ -471,7 +472,7 @@ _L2:
             flag3 = false;
         if(flag3 | flag2)
         {
-            ((BLE_TestCallback)mBluetoothTestCallback).onTestRecvInitReqPack(false, "Error Packet, \u6536\u5305\u9519\u8BEF\uFF0C\u91CD\u590D\u6536\u5230Auth Request\u5305\uFF01");
+            ((BLE_TestCallback)mBluetoothTestCallback).onTestRecvInitReqPack(false, "Error Packet, 收包错误，重复收到AuthRequest包！");
             continue; /* Loop/switch isn't completed */
         }
         if(!HasRecvedAuthPack())
@@ -496,13 +497,13 @@ _L4:
         Log.i("Packet", (new StringBuilder("init request pack, AutoTestState:")).append(k).toString());
         if(k != 6)
         {
-            ((BLE_TestCallback)mBluetoothTestCallback).onTestRecvInitReqPack(false, "\u6536\u5305\u9519\u8BEF\uFF0C\u5728Auth\u56DE\u5305\u4E4B\u524D\u6536\u5230InitRequst\u5305\uFF01");
+            ((BLE_TestCallback)mBluetoothTestCallback).onTestRecvInitReqPack(false, "收包错误，在Auth回包之前收到InitRequst包！");
         } else
         {
             if(k == 7)
             {
                 new String();
-                msgtestobj = new MsgObj.MsgTestObj(true, "Error Packet, \u6536\u5305\u9519\u8BEF\uFF0C\u91CD\u590D\u6536\u5230Init Request\u5305\uFF01");
+                msgtestobj = new MsgObj.MsgTestObj(true, "Error Packet, 收包错误，重复收到InitRequest包！");
                 mBluetoothTestCallback.sendMessage(27, msgtestobj, 14, 0);
             }
             mBluetoothTestCallback.onTestRecvInitReqPack(true, null);
@@ -823,16 +824,16 @@ _L3:
           goto _L5
     }
 
-    public void addRecvData(byte abyte0[], int i, int j)
-    {
+    // 接收数据的回调
+    // 其中，abyte0是接收的数据，i是abyte0的长度，seqId是seq序号
+    public void addRecvData(byte abyte0[], int i, int seqId) {
         int k;
         boolean flag;
         k = mAutoTestState;
         Log.d("Packet", (new StringBuilder("addRecvData: ")).append(Util.byteArray2HexString(abyte0, i)).append(",AutoTestState: ").append(mAutoTestState).toString());
         int l = mRecvOffset;
         flag = false;
-        if(l < 8)
-        {
+        if(l < 8) {
             int i1 = i;
             if(mRecvDataLen != 0)
                 i1 = min(i, mRecvBufSize - mRecvOffset);
@@ -852,12 +853,14 @@ _L1:
         aobj1[0] = Byte.valueOf(mRecvBuf[1]);
         stringbuilder.append(String.format("%02X", aobj1));
         Log.i("Packet", stringbuilder.toString());
+
+        // 若"第1个字节是0xFE，第2个字节是1"，则该数据是消息头！
+        // 是消息头则跳转到_L3，否则跳转到_L4。
         if(mRecvBuf[0] != -2 || mRecvBuf[1] != 1) goto _L4; else goto _L3
 _L3:
         mRecvDataLen = (mRecvBuf[2] << 8) + mRecvBuf[3];
         Log.i("Packet", (new StringBuilder("mRecvDataLen = ")).append(mRecvDataLen).toString());
-        if(mRecvDataLen > mRecvBufSize)
-        {
+        if(mRecvDataLen > mRecvBufSize) {
             Log.e("Packet", "mRecvDataLen > mRecvBufSize, reset");
             mRecvOffset = 0;
         }
@@ -870,7 +873,7 @@ _L10:
         Log.d("Packet", (new StringBuilder("mRecvBuf_2  ")).append(Util.byteArray2HexString(mRecvBuf, 60)).append("; addRecvData: ").append(Util.byteArray2HexString(abyte0, i)).toString());
         if(mRecvOffset == 0 || mRecvOffset != mRecvDataLen) goto _L6; else goto _L5
 _L5:
-        process(mRecvBuf, mRecvDataLen, j);
+        process(mRecvBuf, mRecvDataLen, seqId);
         resetRecv();
 _L8:
         return;
@@ -879,8 +882,7 @@ _L4:
         if(!HasRecvedAuthPack())
             if(mBtType == 0)
                 ((BLE_TestCallback)mBluetoothTestCallback).onTestRecvAuthReqtWhenStartedIndicating(false, "invalid packet, MagicNumber field != 0xFE01");
-            else
-            if(mBtType == 1)
+            else if(mBtType == 1)
                 ((BC_TestCallback)mBluetoothTestCallback).onTestRecvAuthReqtWhenConnected(false, "invalid packet, MagicNumber field != 0xFE01");
         continue; /* Loop/switch isn't completed */
 _L6:
@@ -892,15 +894,15 @@ _L7:
             return;
 
         case 4: // '\004'
-            ((BLE_TestCallback)mBluetoothTestCallback).onTestIsValidAuthReqPack(false, "Packet length error, \u5305\u5934\u6807\u6CE8\u7684\u957F\u5EA6\u5B57\u6BB5\u4E0E\u5B9E\u9645\u5305\u957F\u5EA6\u4E0D\u4E00\u81F4\u3002");
+            ((BLE_TestCallback)mBluetoothTestCallback).onTestIsValidAuthReqPack(false, "Packet length error, 包头标注的长度字段与实际包长度不一致。");
             return;
 
         case 7: // '\007'
-            ((BLE_TestCallback)mBluetoothTestCallback).onTestIsValidInitReqPack(false, "Packet length error, \u5305\u5934\u6807\u6CE8\u7684\u957F\u5EA6\u5B57\u6BB5\u4E0E\u5B9E\u9645\u5305\u957F\u5EA6\u4E0D\u4E00\u81F4\u3002");
+            ((BLE_TestCallback)mBluetoothTestCallback).onTestIsValidInitReqPack(false, "Packet length error, 包头标注的长度字段与实际包长度不一致。");
             return;
 
         case 10: // '\n'
-            ((BLE_TestCallback)mBluetoothTestCallback).onTestIsValidSendDataRequest(false, "Packet length error, \u5305\u5934\u6807\u6CE8\u7684\u957F\u5EA6\u5B57\u6BB5\u4E0E\u5B9E\u9645\u5305\u957F\u5EA6\u4E0D\u4E00\u81F4\u3002");
+            ((BLE_TestCallback)mBluetoothTestCallback).onTestIsValidSendDataRequest(false, "Packet length error, 包头标注的长度字段与实际包长度不一致。");
             break;
         }
         return;
@@ -928,9 +930,8 @@ _L9:
     private static boolean mHasRecvedAuthPack = false;
     private static int mSeqId;
     BluetoothTestCallback mBluetoothTestCallback;
-    private byte mRecvBuf[];
-    private int mRecvBufSize;
-    private int mRecvDataLen;
-    private int mRecvOffset;
-
+    private byte mRecvBuf[];    // 接收数据的缓冲
+    private int mRecvBufSize;   // 接收数据的缓冲大小
+    private int mRecvDataLen;   // 已经接收的数据长度
+    private int mRecvOffset;    // 接收数据的偏移(已接收数据的长度)
 }

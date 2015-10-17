@@ -1,0 +1,123 @@
+package com.oceanwing.y.mobile.module.bt.proto;
+
+enum EmCmdId {
+    ECI_none = 0;
+    // req: 手机 -> 蓝牙模块
+    ECI_req_auth = 10001;       // 登录
+    ECI_req_sendData = 10002;   // 手机发送数据给蓝牙模块
+    ECI_req_init = 10003;       // 初始化
+
+    // resp:蓝牙设备 -> 手机
+    ECI_resp_auth = 20001;
+    ECI_resp_sendData = 20002;
+    ECI_resp_init = 20003;
+
+    // push:蓝牙设备 -> 手机
+    ECI_push_recvData = 30001; // 蓝牙设备发送数据给手机
+}
+
+enum EmErrorCode {
+    EEC_system = -1;            // 通用的错误
+    EEC_needAuth = -2;          // 设备未登录
+    EEC_sessionTimeout = -3;    // session 超时,需要重新登录
+    EEC_decode = -4;            // proto 解码失败
+    EEC_deviceIsBlock = -5;     // 设备出现异常,导致被微信临时性禁止登录
+    EEC_serviceUnAvalibleInBackground = -6;     // (ios)处于后台模式,无法正常服务
+    EEC_deviceProtoVersionNeedUpdate = -7;      // 蓝牙设备的 proto 版本过老，需要更新
+    EEC_phoneProtoVersionNeedUpdate = -8;       // 手机的proto版本过老，需要更新
+    EEC_maxReqInQueue = -9;                     // 设备发送了多个请求,并且没有收到回包。微信客户端请求队 列拥塞。
+}
+
+message BaseRequest {
+}
+
+message BaseResponse {
+    required int32 ErrCode = 1;
+    optional string ErrMsg = 2;
+}
+
+message BasePush {
+}
+
+// req, resp ========================================
+enum EmAuthMethod {
+    EAM_md5 = 1;            // (TODO 加密)
+    EAM_macNoEncrypt = 2;   // 没有加密
+}
+
+// 登录 ---------------------------------------------
+message AuthRequest {
+    required BaseRequest BaseRequest = 1;
+    optional bytes Md5DeviceTypeAndDeviceId = 2;// deviceType 加 deviceId 的 md5,16 字节的二进制数据
+    required int32 ProtoVersion = 3;            // 设备支持的本 proto 文件的版本号,第一个字节表示最小版本,第二个字节表示小版本,第三字节表示大版本。版本号为 1.0.0 的话,应该填: 0x010000; 1.2.3 的话,填成 0x010203。
+    required int32 AuthProto = 4;               // 填 1
+    required EmAuthMethod AuthMethod = 5;       // (TODO 加密) 验证和加密的方法,见 EmAuthMethod
+    optional bytes AesSign = 6;                 // (TODO 加密)具体生成方法见文档
+    //optional bytes MacAddress = 7;              // mac 地址,6 位。当设备没有烧 deviceId 的时候,可使用该 mac 地址字段来通过app 的认证
+    //optional string TimeZone = 10;              // 废弃
+    //optional string Language = 11;              // 废弃
+    //optional string DeviceName = 12;            // 废弃
+}
+
+message AuthResponse {
+    required BaseResponse BaseResponse = 1;
+    required bytes AesSessionKey = 2;           // (TODO加密)
+}
+
+// 初始化 --------------------------------------------
+enum EmPlatformType {
+    EPT_ios = 1;
+    EPT_andriod = 2;
+    EPT_wp = 3;
+    EPT_s60v3 = 4;
+    EPT_s60v5 = 5;
+    EPT_s40 = 6;
+    EPT_bb = 7;
+}
+
+message InitRequest {
+    required BaseRequest BaseRequest = 1;
+    optional bytes Challenge = 3;           // 设备用来验证手机是否安全。为设备随机生成的四个字节。
+
+    optional bytes MacAddress = 11;                 // mac 地址,6 位。当设备没有烧 deviceId 的时候,可使用该 mac 地址字段来通过app 的认证
+    optional EmPlatformType PlatformType = 12;      // 手机平台
+    optional string Model = 13;                     // 手机硬件型号
+    optional string Os = 14;                        // 手机 os 版本
+    optional string Language = 15;                  // 语言
+    optional string TimeZone = 16;                  // 时区
+    optional int32 Time = 17;                       // 手机当前时间
+    optional string TimeString = 18;                // 手机当前时间,格式如 201402281005285,具体字段意义为 2014(年)02(2 月)28(28 号)10(点)05(分钟)28(秒)5(星期五)。星期一为 1,星期天 为 7。
+}
+
+message InitResponse {
+    required BaseResponse BaseResponse = 1;
+    required bytes MacAddress = 2;                  // 设备的MAC地址
+    optional uint32 ChalleangeAnswer = 3;           // 手机回复设备的挑战。为设备生成的字节的 crc32。
+    optional uint32 AutoSyncMaxDurationSecond = 4;  // 自动同步最多持续多长，设备就会关闭连接。 0xffffffff 表示无限长。
+}
+
+
+// 手机发送数据给设备 ----------------------------
+// 设备数据类型
+enum EmDeviceDataType {
+    EDDT_cmd = 0;       // 普通数据
+    EDDT_upgrade = 1;   // 升级数据
+}
+
+message SendDataRequest {
+    required BaseRequest BaseRequest = 1;
+    required bytes Data = 2;
+    optional EmDeviceDataType Type = 3;
+}
+
+message SendDataResponse {
+    required BaseResponse BaseResponse = 1;
+    optional bytes Data = 2;
+}
+
+// push ===================================================
+// 设备推送给设备的数据 ---------------------------
+message RecvDataPush {
+    required BasePush BasePush = 1;
+    required bytes Data = 2;
+}
